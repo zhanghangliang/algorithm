@@ -8,15 +8,6 @@ package akari; /**
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import static akari.Space.BLACK;
-import static akari.Space.BULB;
-import static akari.Space.EMPTY;
-import static akari.Space.FOUR;
-import static akari.Space.ONE;
-import static akari.Space.THREE;
-import static akari.Space.TWO;
-import static akari.Space.ZERO;
-
 public class Akari {
     private String filename; // 拼图文件的名称
     private int size;        // 木板是大小x大小
@@ -39,17 +30,17 @@ public class Akari {
         // 初始化整个画板
         clear();
         // 第二行空白黑色
-        setBoard(lines.get(1).split(" "), BLACK);
+        setBoard(lines.get(1).split(" "), Space.BLACK);
         // 第三行黑色0
-        setBoard(lines.get(2).split(" "), ZERO);
+        setBoard(lines.get(2).split(" "), Space.ZERO);
         // 第四行黑色1
-        setBoard(lines.get(3).split(" "), ONE);
+        setBoard(lines.get(3).split(" "), Space.ONE);
         // 第五行黑色2
-        setBoard(lines.get(4).split(" "), TWO);
+        setBoard(lines.get(4).split(" "), Space.TWO);
         // 第六行黑色3
-        setBoard(lines.get(5).split(" "), THREE);
+        setBoard(lines.get(5).split(" "), Space.THREE);
         // 第七行黑色4
-        setBoard(lines.get(6).split(" "), FOUR);
+        setBoard(lines.get(6).split(" "), Space.FOUR);
     }
 
     /**
@@ -77,15 +68,18 @@ public class Akari {
      * Returns true iff k is a legal index into the board.
      */
     public boolean isLegal(int k) {
-        // TODO 5 不懂这是需要返回什么
-        return false;
+        return isLegal(k, k);
     }
 
     /**
      * 如果r和c均为画板的合法参数，则返回true。
      */
     public boolean isLegal(int r, int c) {
-        // TODO 6
+        if (r >= 0 && r < this.size) {
+            if (c >= 0 && c < this.size) {
+                return true;
+            }
+        }
         return false;
     }
 
@@ -109,7 +103,7 @@ public class Akari {
      */
     public static int parseIndex(char x) {
         if (Character.isDigit(x)) {
-            return Integer.parseInt(String.valueOf(x));
+            return Integer.parseInt(Character.toString(x));
         } else if (Character.isUpperCase(x)) {
             return (int) x - 'A' + 10;
         }
@@ -122,10 +116,10 @@ public class Akari {
      */
     public void leftClick(int r, int c) {
         Space space = getBoard(r, c);
-        if (space.equals(EMPTY)) {
-            board[r][c] = BULB;
-        } else if (space.equals(BULB)) {
-            board[r][c] = EMPTY;
+        if (space.equals(Space.EMPTY)) {
+            board[r][c] = Space.BULB;
+        } else if (space.equals(Space.BULB)) {
+            board[r][c] = Space.EMPTY;
         }
     }
 
@@ -136,7 +130,7 @@ public class Akari {
         board = new Space[this.size][this.size];
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
-                board[i][j] = EMPTY;
+                board[i][j] = Space.EMPTY;
             }
         }
     }
@@ -146,8 +140,29 @@ public class Akari {
      * 如果r，c是非法坐标，则抛出非法参数异常。
      */
     public int numberOfBulbs(int r, int c) {
-        // TODO 14
-        return -1;
+        getBoard(r, c);
+        int res = 0;
+        if (isLegal(r - 1, c)) {
+            if (getBoard(r - 1, c) == Space.BULB) {
+                res++;
+            }
+        }
+        if (isLegal(r + 1, c)) {
+            if (getBoard(r + 1, c) == Space.BULB) {
+                res++;
+            }
+        }
+        if (isLegal(r, c - 1)) {
+            if (getBoard(r, c - 1) == Space.BULB) {
+                res++;
+            }
+        }
+        if (isLegal(r, c + 1)) {
+            if (getBoard(r, c + 1) == Space.BULB) {
+                res++;
+            }
+        }
+        return res;
     }
 
     /**
@@ -155,7 +170,39 @@ public class Akari {
      * 如果r，c是非法坐标，则抛出非法参数异常。
      */
     public boolean canSeeBulb(int r, int c) {
-        // TODO 15
+        getBoard(r, c);
+        for (int i = r - 1; i >= 0; i--) {
+            // 向左遍历,如果是灯，则返回true，如果不是空格子则break
+            if (getBoard(i, c) == Space.BULB) {
+                return true;
+            } else if (getBoard(i, c) != Space.EMPTY) {
+                break;
+            }
+        }
+        for (int i = r + 1; i < size; i++) {
+            // 向右遍历,如果是灯，则返回true，如果不是空格子则break
+            if (getBoard(i, c) == Space.BULB) {
+                return true;
+            } else if (getBoard(i, c) != Space.EMPTY) {
+                break;
+            }
+        }
+        for (int i = c + 1; i < size; i++) {
+            // 向上遍历,如果是灯，则返回true，如果不是空格子则break
+            if (getBoard(r, i) == Space.BULB) {
+                return true;
+            } else if (getBoard(r, i) != Space.EMPTY) {
+                break;
+            }
+        }
+        for (int i = c - 1; i >= 0; i--) {
+            // 向上遍历,如果是灯，则返回true，如果不是空格子则break
+            if (getBoard(r, i) == Space.BULB) {
+                return true;
+            } else if (getBoard(r, i) != Space.EMPTY) {
+                break;
+            }
+        }
         return false;
     }
 
