@@ -18,6 +18,7 @@ public class AkariViewer implements MouseListener {
      */
     public AkariViewer(Akari puzzle) {
         this.puzzle = puzzle;
+        this.sc = new SimpleCanvas();
         // TODO 10
     }
 
