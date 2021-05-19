@@ -7,6 +7,7 @@ package akari; /**
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class Akari {
     private String filename; // 拼图文件的名称
@@ -214,10 +215,43 @@ public class Akari {
      * 三个刻度，如LMS页面上所示。
      * r，c必须是具有此类误差的正方形的坐标。
      * 如果板上有多个错误，则可以退回其中任何一个。
+     * Unlit square at r,c - 标识的正方形上没有灯泡闪耀.
+     * Clashing bulb at r,c - 标识的正方形包含一个灯泡，上面还有另一个灯泡.
+     * Broken number at r,c - 标识的正方形是带有错误编号的相邻灯泡的带编号的正方形.
      */
     public String isSolution() {
+        for (int r = 0; r < size; r++) {
+            for (int c = 0; c < size; c++) {
+                Space one = getBoard(r, c);
+                if(one == Space.EMPTY) {
+                    if(!canSeeBulb(r, c)) {
+                        return String.format("Unlit square at %s,%s", r, c);
+                    }
+                } else if (one == Space.BULB) {
+                    if(canSeeBulb(r, c)) {
+                        return String.format("Clashing bulb at %s,%s", r, c);
+                    }
+                } else {
+                    if(one == Space.ZERO && numberOfBulbs(r, c) != 0) {
+                        return String.format("Broken number at %s,%s", r, c);
+                    }
+                    if(one == Space.ONE && numberOfBulbs(r, c) != 1) {
+                        return String.format("Broken number at %s,%s", r, c);
+                    }
+                    if(one == Space.TWO && numberOfBulbs(r, c) != 2) {
+                        return String.format("Broken number at %s,%s", r, c);
+                    }
+                    if(one == Space.THREE && numberOfBulbs(r, c) != 3) {
+                        return String.format("Broken number at %s,%s", r, c);
+                    }
+                    if(one == Space.FOUR && numberOfBulbs(r, c) != 4) {
+                        return String.format("Broken number at %s,%s", r, c);
+                    }
+                }
+            }
+        }
         // TODO 16
-        return null;
+        return "\u2713\u2713\u2713";
     }
 
     /**
